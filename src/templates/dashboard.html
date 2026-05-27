@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Cyber Sec Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    <main class="shell">
+        <section class="grid nav-section">
+            <article class="card dashboard-card" style="grid-column: span 3; max-width: 700px; margin: 0 auto;">
+                <div class="card-header">
+                    <h2>Dashboard</h2>
+                    <p>Protected route dashboard</p>
+                </div>
+                
+                {% if error %}
+                    <div class="flash error">{{ error }}</div>
+                {% else %}
+                    <pre id="dashboardOutput" style="margin-bottom: 2rem;">Welcome back, {{ user.username }}!&#10;Your account ID: {{ user.id }}&#10;Member since: {{ user.created_at }}</pre>
+                {% endif %}
+
+                <div style="border-top: 1px solid var(--panel-border); padding-top: 1.5rem;">
+                    <h3>Cross-Site Scripting (XSS) Demo</h3>
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">Try searching for: <br/><code>&lt;script&gt;alert('Hacked!');&lt;/script&gt;</code></p>
+                    
+                    <form method="GET" action="/dashboard" class="form compact">
+                        <label>
+                            Search Users:
+                            <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search here..." />
+                        </label>
+                        <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                            <button type="submit" name="type" value="vulnerable" class="secondary" style="margin: 0;">Vulnerable Search</button>
+                            <button type="submit" name="type" value="secure" style="margin: 0;">Secure Search</button>
+                        </div>
+                    </form>
+
+                    {% if request.args.get('q') %}
+                        <div style="margin-top: 1rem; padding: 1rem; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.2); border-radius: 8px;">
+                            {% if request.args.get('type') == 'vulnerable' %}
+                                <p style="color: var(--danger)"><strong>Results for:</strong> {{ request.args.get('q') | safe }}</p>
+                            {% else %}
+                                <p style="color: var(--accent)"><strong>Results for:</strong> {{ request.args.get('q') }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div style="border-top: 1px solid var(--panel-border); padding-top: 1.5rem; margin-top: 2rem;">
+                    <h3>Insecure Direct Object Reference (IDOR) Demo</h3>
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                        Try changing the user ID (e.g., from your ID to `1` or `2`) in the URL.
+                    </p>
+                    <div class="dashboard-actions">
+                        <!-- IDOR Vulnerable link (anyone can view any ID without auth) -->
+                        <a href="/profile/vulnerable/1" target="_blank" class="button secondary" style="text-decoration: none;">Vulnerable Route (ID: 1)</a>
+                        <!-- Secure link (Checks token AND ensures token matches the requested ID) -->
+                        <a href="/profile/secure/1" target="_blank" class="button" style="text-decoration: none;">Secure Route (ID: 1)</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-actions" style="margin-top: 3rem; border-top: 1px solid var(--panel-border); padding-top: 1.5rem;">
+                    <a href="/logout" class="button ghost" style="text-decoration: none;">Log out</a>
+                    <a href="/" class="button ghost" style="text-decoration: none;">Back to Home</a>
+                </div>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

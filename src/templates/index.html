@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber Sec Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <main class="shell">
+        <nav class="site-nav">
+            <a href="/" class="nav-btn active">Home</a>
+            <a href="/register" class="nav-btn">Register</a>
+            <a href="/login" class="nav-btn">Login</a>
+            <a href="/dashboard" class="nav-btn">Dashboard</a>
+        </nav>
+
+        <section id="home" class="hero nav-section">
+            <div class="hero-copy">
+                <p class="eyebrow" style="animation: fadeInUp 0.4s ease 0.2s both; opacity: 0;">Cyber Security Demo App</p>
+                <h1 style="animation: fadeInUp 0.4s ease 0.4s both; opacity: 0;">Secure vs. Vulnerable auth and a protected dashboard in one project.</h1>
+                <p class="lead" style="animation: fadeInUp 0.4s ease 0.6s both; opacity: 0;">
+                    1. <b>Register a user</b>.<br>
+                    2. <b>Test the SQL injection demo</b> to see how unparameterized queries can be bypassed without a valid password.<br>
+                    3. <b>Sign in securely</b> to receive a JWT HttpOnly cookie and unlock the dashboard.<br>
+                </p>
+                <div class="status-row" style="animation: fadeInUp 0.4s ease 0.8s both; opacity: 0;">
+                    <span class="pill accent">Flask/Python Backend</span>
+                    <span class="pill">MySQL Database</span>
+                    <span class="pill">JWT Auth</span>
+                </div>
+            </div>
+            <div class="hero-panel">
+                <div class="terminal-window">
+                    <div class="terminal-dots">
+                        <span style="background: #ff5f56"></span><span style="background: #ffbd2e"></span><span style="background: #27c93f"></span>
+                    </div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <p id="log" class="{{ category }} typing-line">{{ message }}</p>
+                        {% endfor %}
+                      {% else %}
+                        <p id="log" style="color: #27c93f; font-family: 'JetBrains Mono', monospace;" class="typing-line">root@cybersec:~# System Ready. Register or log in to continue.</p>
+                      {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </section>
+
+        <!-- New section detailing the attacks -->
+        <section id="attacks" class="grid nav-section" style="margin-top: 60px; animation: fadeInUp 0.6s ease 1s both; opacity: 0;">
+            <div style="grid-column: span 3; text-align: center; margin-bottom: 20px;">
+                <h2>Featured Vulnerabilities</h2>
+                <p style="color: var(--muted); font-size: 1.1rem;">Learn how common web attacks work and how this project mitigates them.</p>
+            </div>
+            
+            <!-- SQL Injection -->
+            <article class="card">
+                <div class="card-header">
+                    <h3 style="color: var(--danger); margin-top: 0;">1. SQL Injection (SQLi)</h3>
+                </div>
+                <p style="font-size: 0.95rem; color: var(--text);"><strong>What is it?</strong><br>An attacker interferes with the queries that an application makes to its database.</p>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--panel-border);">
+                    <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 10px;"><strong>Vulnerable:</strong><br>Uses raw string formatting to construct queries. Passing <code>' OR 1=1-- </code> in the login completely bypasses the password check.</p>
+                    <p style="font-size: 0.9rem; color: var(--accent);"><strong>Secure:</strong><br>Uses Parameterized Queries (Prepared Statements), treating input strictly as data, not executable SQL commands.</p>
+                </div>
+            </article>
+
+            <!-- Cross-Site Scripting -->
+            <article class="card">
+                <div class="card-header">
+                    <h3 style="color: var(--accent-2); margin-top: 0;">2. Cross-Site Scripting (XSS)</h3>
+                </div>
+                <p style="font-size: 0.95rem; color: var(--text);"><strong>What is it?</strong><br>An attacker injects malicious executable scripts into the content of a trusted website.</p>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--panel-border);">
+                    <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 10px;"><strong>Vulnerable:</strong><br>User input (like a search query) is reflected directly back to the browser without HTML encoding, causing the browser to execute it.</p>
+                    <p style="font-size: 0.9rem; color: var(--accent);"><strong>Secure:</strong><br>Automatically HTML-escapes all user-provided variables, rendering &lt;script&gt; tags as harmless plain text.</p>
+                </div>
+            </article>
+
+            <!-- Insecure Direct Object Reference -->
+            <article class="card">
+                <div class="card-header">
+                    <h3 style="color: var(--accent); margin-top: 0;">3. IDOR Vulnerability</h3>
+                </div>
+                <p style="font-size: 0.95rem; color: var(--text);"><strong>What is it?</strong><br>An application provides direct access to objects based on user-supplied input without proper authorization.</p>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--panel-border);">
+                    <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 10px;"><strong>Vulnerable:</strong><br>The backend retrieves a user profile merely by reading the ID from the URL (e.g., <code>/profile/1</code>), allowing anyone to view it.</p>
+                    <p style="font-size: 0.9rem; color: var(--accent);"><strong>Secure:</strong><br>The backend verifies that the requested ID explicitly matches the ID bound to the securely signed JWT session token.</p>
+                </div>
+            </article>
+            <!-- Bruteforce Monitoring & Password Strength -->
+            <article class="card">
+                <div class="card-header">
+                    <h3 style="color: var(--accent); margin-top: 0;">4. Weak Passwords & Brute Force</h3>
+                </div>
+                <p style="font-size: 0.95rem; color: var(--text);"><strong>What is it?</strong><br>Attackers guess weak passwords or automate login attempts to force their way into accounts.</p>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--panel-border);">
+                    <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 10px;"><strong>Vulnerable:</strong><br>An application accepts "password" or allows 100 failed login attempts in a minute.</p>
+                    <p style="font-size: 0.9rem; color: var(--accent);"><strong>Secure:</strong><br>This app enforces complex password policies upon registration and monitors failed authentications to throw <i>Brute Force</i> alerts!</p>
+                </div>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

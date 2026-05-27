@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Cyber Sec Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    <main class="shell">
+        <section class="grid nav-section">
+            <article class="card" style="grid-column: span 3; max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h2>Register</h2>
+                    <p>Create a user in the MySQL users table.</p>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                <form action="/register" method="POST" class="form">
+                    <label>
+                        Username
+                        <input name="username" type="text" required />
+                    </label>
+                    <label>
+                        Password
+                        <input name="password" type="password" required />
+                    </label>
+                    <button type="submit">Create account</button>
+                    <a href="/" style="display: block; text-align: center; margin-top: 1rem; color: white;">Back to Home</a>
+                </form>
+            </article>
+        </section>
+    </main>
+</body>
+</html>
